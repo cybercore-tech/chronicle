@@ -27,17 +27,65 @@ pub fn head(repo: &Path) -> Option<String> {
     Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
 
-/// One-line commit summaries for every commit in `old..new`. Empty if
-/// `old` isn't an ancestor reachable this way (e.g. after a force-push or
-/// rebase rewrote history) — that's reported by the caller as "history
-/// diverged" rather than silently showing zero commits.
-pub fn log_range(repo: &Path, old: &str, new: &str) -> Option<Vec<String>> {
+#[derive(Debug, Clone)]
+pub struct CommitInfo {
+    pub full_hash: String,
+    pub short_hash: String,
+    pub subject: String,
+}
+
+/// Every commit in `old..new`, full + short hash and subject line kept
+/// separate (rather than one pre-formatted string) so callers can build
+/// either a plain display or a linked one. Empty if `old` isn't an
+/// ancestor reachable this way (e.g. after a force-push or rebase rewrote
+/// history) — that's reported by the caller as "history diverged" rather
+/// than silently showing zero commits.
+pub fn log_range(repo: &Path, old: &str, new: &str) -> Option<Vec<CommitInfo>> {
     let range = format!("{old}..{new}");
-    let output = Command::new("git").args(["-C", &repo.to_string_lossy(), "log", "--oneline", &range]).output().ok()?;
+    // %x1f (unit separator) between fields, one commit per line — avoids
+    // ambiguity with commit subjects that happen to contain spaces or colons.
+    let output =
+        Command::new("git").args(["-C", &repo.to_string_lossy(), "log", "--format=%H%x1f%h%x1f%s", &range]).output().ok()?;
     if !output.status.success() {
         return None;
     }
-    Some(String::from_utf8_lossy(&output.stdout).lines().map(String::from).collect())
+    let text = String::from_utf8_lossy(&output.stdout);
+    let commits = text
+        .lines()
+        .filter_map(|line| {
+            let mut parts = line.splitn(3, '\u{1f}');
+            Some(CommitInfo {
+                full_hash: parts.next()?.to_string(),
+                short_hash: parts.next()?.to_string(),
+                subject: parts.next().unwrap_or("").to_string(),
+            })
+        })
+        .collect();
+    Some(commits)
+}
+
+/// The `origin` remote, normalized to an `https://github.com/owner/repo`
+/// base URL if it looks like a GitHub remote (SSH or HTTPS form) —
+/// `None` for anything else (no remote, or a non-GitHub host), since
+/// commit links are only buildable for GitHub.
+pub fn github_base_url(repo: &Path) -> Option<String> {
+    let output = Command::new("git").args(["-C", &repo.to_string_lossy(), "remote", "get-url", "origin"]).output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let url = String::from_utf8_lossy(&output.stdout).trim().to_string();
+
+    let path = if let Some(rest) = url.strip_prefix("git@github.com:") {
+        rest
+    } else if let Some(rest) = url.strip_prefix("https://github.com/") {
+        rest
+    } else if let Some(rest) = url.strip_prefix("http://github.com/") {
+        rest
+    } else {
+        return None;
+    };
+    let path = path.strip_suffix(".git").unwrap_or(path);
+    Some(format!("https://github.com/{path}"))
 }
 
 pub fn dirty_status(repo: &Path) -> DirtyStatus {
@@ -111,8 +159,44 @@ mod tests {
 
         let commits = log_range(&dir, &old, &new).expect("range should resolve");
         assert_eq!(commits.len(), 2);
-        assert!(commits[0].contains("third commit"));
-        assert!(commits[1].contains("second commit"));
+        assert_eq!(commits[0].subject, "third commit");
+        assert_eq!(commits[1].subject, "second commit");
+        assert_eq!(commits[0].full_hash.len(), 40, "full hash should be a complete sha1");
+        assert!(commits[0].full_hash.starts_with(&commits[0].short_hash), "short hash should be a prefix of the full one");
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn github_base_url_normalizes_ssh_remote() {
+        let dir = scratch("ssh-remote");
+        init_repo(&dir);
+        Command::new("git")
+            .args(["remote", "add", "origin", "git@github.com:darkstardevx/chronicle.git"])
+            .current_dir(&dir)
+            .status()
+            .unwrap();
+        assert_eq!(github_base_url(&dir).as_deref(), Some("https://github.com/darkstardevx/chronicle"));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn github_base_url_normalizes_https_remote() {
+        let dir = scratch("https-remote");
+        init_repo(&dir);
+        Command::new("git")
+            .args(["remote", "add", "origin", "https://github.com/darkstardevx/chronicle.git"])
+            .current_dir(&dir)
+            .status()
+            .unwrap();
+        assert_eq!(github_base_url(&dir).as_deref(), Some("https://github.com/darkstardevx/chronicle"));
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn github_base_url_none_without_a_remote() {
+        let dir = scratch("no-remote");
+        init_repo(&dir);
+        assert_eq!(github_base_url(&dir), None);
         std::fs::remove_dir_all(&dir).ok();
     }
 

@@ -101,7 +101,8 @@ fn main() -> ExitCode {
             }
 
             let dirty = git::dirty_status(&repo);
-            RepoDigest { path: repo, kind, dirty }
+            let github_base = git::github_base_url(&repo);
+            RepoDigest { path: repo, kind, dirty, github_base }
         })
         .collect();
 

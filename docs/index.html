@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A focused Git activity digest for a tree of repositories. Track new commits, working-tree changes, and history rewrites with Chronicle.">
+<meta name="theme-color" content="#080b12">
+<meta property="og:title" content="Chronicle / Cybercore">
+<meta property="og:description" content="A focused Git activity digest for a tree of repositories. Track new commits, working-tree changes, and history rewrites with Chronicle.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cybercore-tech.github.io/chronicle/">
+<title>Chronicle — Every repo. Every change. / Cybercore</title>
+<link rel="canonical" href="https://cybercore-tech.github.io/chronicle/">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer>
+</script>
+</head>
+<body data-project="chronicle">
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+<div class="wrap bar">
+<a class="brand" href="#top">
+<img src="assets/mark.svg" alt="">
+<span>
+<strong>CHRONICLE</strong>
+<small>A CYBERCORE SYSTEM</small>
+</span>
+</a>
+<nav aria-label="Primary">
+<a href="#capabilities">Capabilities</a>
+<a href="#workflow">Workflow</a>
+<a href="#setup">Get started ↗</a>
+</nav>
+<label class="theme">
+<span>PALETTE</span>
+<select id="theme" aria-label="Site palette">
+<option>Cybercore</option>
+<option>Dracula</option>
+<option>Tokyo Night</option>
+<option>Outrun</option>
+</select>
+</label>
+</div>
+</header>
+<main id="main">
+<div class="wrap" id="top">
+<section class="hero">
+<div>
+<p class="eyebrow">THE CYBERCORE REPOSITORY JOURNAL</p>
+<h1>Every repo.<br>Every change.<br>
+<em>One chronicle.</em>
+</h1>
+<p class="lede">Pick up exactly where you left off. Chronicle turns activity across your repositories into a compact digest of new commits, working-tree changes, and rewritten history.</p>
+<div class="actions">
+<a class="button primary" href="#setup">Get started <span>↗</span>
+</a>
+<a class="button" href="https://github.com/cybercore-tech/chronicle">View source <span>↗</span>
+</a>
+</div>
+<p class="footnote">
+<span class="dot">
+</span>LOCAL FIRST &nbsp; / &nbsp; RUST + GIT &nbsp; / &nbsp; OPEN SOURCE</p>
+</div>
+<div class="window">
+<div class="chrome">
+<span>
+<span class="lights">● ● ●</span> &nbsp; chronicle / activity stream</span>
+<span>PREVIEW</span>
+</div>
+<div class="tabs" role="group" aria-label="Digest preview">
+<button data-demo="digest" aria-pressed="true" aria-controls="digest">01 ACTIVITY</button>
+<button data-demo="first" aria-pressed="false" aria-controls="first">02 FIRST RUN</button>
+<button data-demo="journal" aria-pressed="false" aria-controls="journal">03 JOURNAL</button>
+</div>
+<div class="demo" id="digest">
+<pre>
+<b>$ chronicle</b>
+
+<strong>=== cyberdesk ===</strong>
+  a42f8c1 Refine the editor layout
+  working tree: 1 modified, 0 staged, 0 untracked
+
+<strong>=== cybercore ===</strong>
+  f70ba92 Add a new palette
+
+<b>=== field-notes ===</b>
+  history rewritten since last check
+
+3 repo(s) total, 3 with activity to report</pre>
+</div>
+<div class="demo" id="first" hidden>
+<pre>
+<b>$ chronicle</b>
+
+<b>=== cyberdesk ===</b>
+  tracking started
+
+<b>=== cybercore ===</b>
+  tracking started
+
+<b>=== field-notes ===</b>
+  tracking started</pre>
+<p class="notice">First sighting establishes a baseline. Existing commit history is not replayed.</p>
+</div>
+<div class="demo" id="journal" hidden>
+<p class="micro">VAULT / CHRONICLE / YYYY-MM-DD.MD</p>
+<h3>The day, in changes.</h3>
+<div class="timeline" aria-hidden="true">
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+</div>
+<div class="demo-row">
+<b>09:00:00 run</b>
+<span>Morning baseline</span>
+</div>
+<div class="demo-row">
+<b>12:30:00 run</b>
+<span>New commits</span>
+</div>
+<div class="demo-row">
+<b>17:45:00 run</b>
+<span>Working-tree changes</span>
+</div>
+<p class="notice">Each invocation appends a timestamped digest when Markdown logging is configured.</p>
+</div>
+<div class="demo-foot">
+<span>ILLUSTRATIVE DATA · SELECT A VIEW ABOVE</span>
+<span>CYBERCORE / 01</span>
+</div>
+</div>
+</section>
+<div class="metrics">
+<div>
+<b>Git-native</b>
+<small>Real repository signals</small>
+</div>
+<div>
+<b>Stateful</b>
+<small>Since your last check</small>
+</div>
+<div>
+<b>Markdown</b>
+<small>An optional daily journal</small>
+</div>
+<div>
+<b>Rust</b>
+<small>Small, focused CLI</small>
+</div>
+</div>
+<section class="section" id="capabilities">
+<div class="heading">
+<div>
+<p class="eyebrow">01 / BUILT WITH INTENT</p>
+<h2>A place for every<br>
+<em>meaningful change.</em>
+</h2>
+</div>
+<p>Tools earn their place by making the next step easier. Chronicle keeps a narrow focus: what changed in Git since your last look.</p>
+</div>
+<div class="cards">
+<article class="card">
+<span class="number">01 /</span>
+<h3>One tree. All the activity.</h3>
+<p>Discover repositories beneath configured roots, with a depth limit you control. Discovery stops at each repository boundary.</p>
+</article>
+<article class="card">
+<span class="number">02 /</span>
+<h3>Only the new chapter.</h3>
+<p>Remember the last-seen commit for each repository and report commits since that checkpoint.</p>
+</article>
+<article class="card">
+<span class="number">03 /</span>
+<h3>Uncommitted counts, too.</h3>
+<p>See modified, staged, and untracked counts alongside committed work. Loose ends stay visible.</p>
+</article>
+<article class="card">
+<span class="number">04 /</span>
+<h3>Rewrites are a signal.</h3>
+<p>Report history changes that cannot be represented as a linear list of new commits.</p>
+</article>
+<article class="card">
+<span class="number">05 /</span>
+<h3>A journal that accumulates.</h3>
+<p>Append timestamped Markdown digests to a daily file. GitHub origins produce clickable commit links.</p>
+</article>
+<article class="card">
+<span class="number">06 /</span>
+<h3>Quiet when nothing moved.</h3>
+<p>Unchanged, clean repositories stay out of the digest unless you request them with --show-unchanged.</p>
+</article>
+</div>
+</section>
+<section class="section wide" id="workflow">
+<div>
+<p class="eyebrow">02 / IN YOUR ELEMENT</p>
+<h2>Less catching up.<br>
+<em>More moving forward.</em>
+</h2>
+<p class="lede">A checkpoint, a comparison, a useful digest. The rhythm stays simple as your repository tree grows.</p>
+<a class="button" href="https://github.com/cybercore-tech/chronicle/tree/main/src">Explore the implementation ↗</a>
+</div>
+<div class="steps">
+<article class="step">
+<div>
+<h3>Choose the territory.</h3>
+<p>Configure one or more repository roots and a maximum discovery depth.</p>
+</div>
+</article>
+<article class="step">
+<div>
+<h3>Establish your checkpoint.</h3>
+<p>The first run records each repository’s HEAD. Subsequent runs compare against saved state.</p>
+</div>
+</article>
+<article class="step">
+<div>
+<h3>Read the next chapter.</h3>
+<p>Run Chronicle again for a new digest. Use your own scheduler if you want periodic reports.</p>
+</div>
+</article>
+</div>
+</section>
+<section class="section" id="setup">
+<div class="heading">
+<div>
+<p class="eyebrow">03 / MAKE IT YOURS</p>
+<h2>Your next session<br>
+<em>starts here.</em>
+</h2>
+</div>
+<p>Bring Rust and Git. These Linux commands use sibling checkouts and adjust the published manifest’s machine-specific Cybercore path. Then add a configuration file for your repository roots.</p>
+</div>
+<div class="codebox">
+<div class="chrome">
+<span>TERMINAL / INSTALL</span>
+<button class="copy" data-copy="install" aria-label="Copy TERMINAL / INSTALL">COPY</button>
+</div>
+<pre>
+<code id="install"># Run from a new workspace directory
+git clone https://github.com/cybercore-tech/cybercore.git
+git clone https://github.com/cybercore-tech/chronicle.git
+cd chronicle
+# Make the published manifest&#x27;s local dependency portable (Linux):
+sed -i &#x27;s|/home/raven/.sysops/cybercore|../cybercore|&#x27; Cargo.toml
+cargo install --path . --locked
+mkdir -p &quot;$HOME/.config/chronicle&quot;
+# Save the configuration below as ~/.config/chronicle/config.toml
+chronicle</code>
+</pre>
+</div>
+<div class="wide" style="margin-top:36px">
+<div>
+<p class="micro">CONFIG.TOML / THE ESSENTIALS</p>
+<div class="codebox">
+<div class="chrome">
+<span>CONFIGURATION</span>
+<button class="copy" data-copy="config" aria-label="Copy CONFIGURATION">COPY</button>
+</div>
+<pre>
+<code id="config">state_path = &quot;~/.local/state/chronicle/state.json&quot;
+max_depth = 3
+markdown_out_dir = &quot;~/Notes/Chronicle&quot;
+
+[[root]]
+path = &quot;~/Devspace&quot;</code>
+</pre>
+</div>
+<p class="notice">Set root paths to your own repository directories. --config selects another configuration file; --no-color disables terminal colors.</p>
+<p class="copy-status" role="status" aria-live="polite">
+</p>
+</div>
+<div>
+<details>
+<summary>Does it scan inside each repository?</summary>
+<p>Discovery stops when it finds a .git directory or file. Chronicle reads Git state rather than monitoring every filesystem write.</p>
+</details>
+<details>
+<summary>Does it run in the background?</summary>
+<p>Each invocation scans, reports, and updates its checkpoint. Schedule the command yourself for periodic digests.</p>
+</details>
+<details>
+<summary>What should I know about roots and history?</summary>
+<p>Overlapping roots are not deduplicated. A rewritten history is flagged, but Chronicle does not reconstruct the rewrite. GitHub commit links require a GitHub origin.</p>
+</details>
+</div>
+</div>
+</section>
+<section class="endcap">
+<div>
+<p class="eyebrow">PART OF THE CYBERCORE FAMILY</p>
+<h2>Independent tools.<br>
+<em>One shared language.</em>
+</h2>
+</div>
+<div class="actions">
+<a class="button primary" href="https://cybercore-tech.github.io/">Explore Cybercore ↗</a>
+<a class="button" href="https://cybercore-tech.github.io/cyberdesk/">Meet Cyberdesk ↗</a>
+</div>
+</section>
+</div>
+</main>
+<footer>
+<div class="wrap footer-inner">
+<span>CHRONICLE / BUILT IN RUST · PART OF CYBERCORE</span>
+<div>
+<a href="https://github.com/cybercore-tech/chronicle">GITHUB ↗</a>
+<a href="#top">BACK TO TOP ↑</a>
+</div>
+</div>
+</footer>
+</body>
+</html>

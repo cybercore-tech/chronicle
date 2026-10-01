@@ -20,7 +20,10 @@ impl DirtyStatus {
 }
 
 pub fn head(repo: &Path) -> Option<String> {
-    let output = Command::new("git").args(["-C", &repo.to_string_lossy(), "rev-parse", "HEAD"]).output().ok()?;
+    let output = Command::new("git")
+        .args(["-C", &repo.to_string_lossy(), "rev-parse", "HEAD"])
+        .output()
+        .ok()?;
     if !output.status.success() {
         return None;
     }
@@ -44,8 +47,16 @@ pub fn log_range(repo: &Path, old: &str, new: &str) -> Option<Vec<CommitInfo>> {
     let range = format!("{old}..{new}");
     // %x1f (unit separator) between fields, one commit per line — avoids
     // ambiguity with commit subjects that happen to contain spaces or colons.
-    let output =
-        Command::new("git").args(["-C", &repo.to_string_lossy(), "log", "--format=%H%x1f%h%x1f%s", &range]).output().ok()?;
+    let output = Command::new("git")
+        .args([
+            "-C",
+            &repo.to_string_lossy(),
+            "log",
+            "--format=%H%x1f%h%x1f%s",
+            &range,
+        ])
+        .output()
+        .ok()?;
     if !output.status.success() {
         return None;
     }
@@ -69,7 +80,10 @@ pub fn log_range(repo: &Path, old: &str, new: &str) -> Option<Vec<CommitInfo>> {
 /// `None` for anything else (no remote, or a non-GitHub host), since
 /// commit links are only buildable for GitHub.
 pub fn github_base_url(repo: &Path) -> Option<String> {
-    let output = Command::new("git").args(["-C", &repo.to_string_lossy(), "remote", "get-url", "origin"]).output().ok()?;
+    let output = Command::new("git")
+        .args(["-C", &repo.to_string_lossy(), "remote", "get-url", "origin"])
+        .output()
+        .ok()?;
     if !output.status.success() {
         return None;
     }
@@ -90,7 +104,10 @@ pub fn github_base_url(repo: &Path) -> Option<String> {
 
 pub fn dirty_status(repo: &Path) -> DirtyStatus {
     let mut status = DirtyStatus::default();
-    let Ok(output) = Command::new("git").args(["-C", &repo.to_string_lossy(), "status", "--porcelain"]).output() else {
+    let Ok(output) = Command::new("git")
+        .args(["-C", &repo.to_string_lossy(), "status", "--porcelain"])
+        .output()
+    else {
         return status;
     };
     for line in String::from_utf8_lossy(&output.stdout).lines() {
@@ -119,19 +136,40 @@ mod tests {
     use std::process::Command;
 
     fn init_repo(dir: &Path) {
-        Command::new("git").args(["init", "-q", "-b", "main"]).current_dir(dir).status().unwrap();
-        Command::new("git").args(["config", "user.email", "test@test"]).current_dir(dir).status().unwrap();
-        Command::new("git").args(["config", "user.name", "test"]).current_dir(dir).status().unwrap();
+        Command::new("git")
+            .args(["init", "-q", "-b", "main"])
+            .current_dir(dir)
+            .status()
+            .unwrap();
+        Command::new("git")
+            .args(["config", "user.email", "test@test"])
+            .current_dir(dir)
+            .status()
+            .unwrap();
+        Command::new("git")
+            .args(["config", "user.name", "test"])
+            .current_dir(dir)
+            .status()
+            .unwrap();
     }
 
     fn commit(dir: &Path, filename: &str, content: &str, message: &str) {
         std::fs::write(dir.join(filename), content).unwrap();
-        Command::new("git").args(["add", "."]).current_dir(dir).status().unwrap();
-        Command::new("git").args(["commit", "-q", "-m", message]).current_dir(dir).status().unwrap();
+        Command::new("git")
+            .args(["add", "."])
+            .current_dir(dir)
+            .status()
+            .unwrap();
+        Command::new("git")
+            .args(["commit", "-q", "-m", message])
+            .current_dir(dir)
+            .status()
+            .unwrap();
     }
 
     fn scratch(name: &str) -> std::path::PathBuf {
-        let dir = std::env::temp_dir().join(format!("chronicle-git-test-{name}-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("chronicle-git-test-{name}-{}", std::process::id()));
         std::fs::remove_dir_all(&dir).ok();
         std::fs::create_dir_all(&dir).unwrap();
         dir
@@ -161,8 +199,15 @@ mod tests {
         assert_eq!(commits.len(), 2);
         assert_eq!(commits[0].subject, "third commit");
         assert_eq!(commits[1].subject, "second commit");
-        assert_eq!(commits[0].full_hash.len(), 40, "full hash should be a complete sha1");
-        assert!(commits[0].full_hash.starts_with(&commits[0].short_hash), "short hash should be a prefix of the full one");
+        assert_eq!(
+            commits[0].full_hash.len(),
+            40,
+            "full hash should be a complete sha1"
+        );
+        assert!(
+            commits[0].full_hash.starts_with(&commits[0].short_hash),
+            "short hash should be a prefix of the full one"
+        );
         std::fs::remove_dir_all(&dir).ok();
     }
 
@@ -171,11 +216,19 @@ mod tests {
         let dir = scratch("ssh-remote");
         init_repo(&dir);
         Command::new("git")
-            .args(["remote", "add", "origin", "git@github.com:darkstardevx/chronicle.git"])
+            .args([
+                "remote",
+                "add",
+                "origin",
+                "git@github.com:darkstardevx/chronicle.git",
+            ])
             .current_dir(&dir)
             .status()
             .unwrap();
-        assert_eq!(github_base_url(&dir).as_deref(), Some("https://github.com/darkstardevx/chronicle"));
+        assert_eq!(
+            github_base_url(&dir).as_deref(),
+            Some("https://github.com/darkstardevx/chronicle")
+        );
         std::fs::remove_dir_all(&dir).ok();
     }
 
@@ -184,11 +237,19 @@ mod tests {
         let dir = scratch("https-remote");
         init_repo(&dir);
         Command::new("git")
-            .args(["remote", "add", "origin", "https://github.com/darkstardevx/chronicle.git"])
+            .args([
+                "remote",
+                "add",
+                "origin",
+                "https://github.com/darkstardevx/chronicle.git",
+            ])
             .current_dir(&dir)
             .status()
             .unwrap();
-        assert_eq!(github_base_url(&dir).as_deref(), Some("https://github.com/darkstardevx/chronicle"));
+        assert_eq!(
+            github_base_url(&dir).as_deref(),
+            Some("https://github.com/darkstardevx/chronicle")
+        );
         std::fs::remove_dir_all(&dir).ok();
     }
 
@@ -233,7 +294,11 @@ mod tests {
         commit(&dir, "a.txt", "one", "first commit");
 
         std::fs::write(dir.join("a.txt"), "staged change").unwrap();
-        Command::new("git").args(["add", "."]).current_dir(&dir).status().unwrap();
+        Command::new("git")
+            .args(["add", "."])
+            .current_dir(&dir)
+            .status()
+            .unwrap();
 
         let status = dirty_status(&dir);
         assert_eq!(status.staged, 1);

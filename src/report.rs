@@ -51,8 +51,16 @@ pub fn render(digests: &[RepoDigest], color_on: bool, show_unchanged: bool) -> S
             active += 1;
         }
 
-        let (c, r) = if color_on { (color(&d.kind), reset().to_string()) } else { (String::new(), String::new()) };
-        let name = d.path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| d.path.display().to_string());
+        let (c, r) = if color_on {
+            (color(&d.kind), reset().to_string())
+        } else {
+            (String::new(), String::new())
+        };
+        let name = d
+            .path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| d.path.display().to_string());
 
         out.push_str(&format!("{c}=== {name} ==={r}\n"));
         match &d.kind {
@@ -73,7 +81,11 @@ pub fn render(digests: &[RepoDigest], color_on: bool, show_unchanged: bool) -> S
         }
     }
 
-    out.push_str(&format!("\n{} repo(s) total, {} with activity to report\n", digests.len(), active));
+    out.push_str(&format!(
+        "\n{} repo(s) total, {} with activity to report\n",
+        digests.len(),
+        active
+    ));
     out
 }
 
@@ -95,15 +107,25 @@ pub fn render_markdown(digests: &[RepoDigest], show_unchanged: bool) -> String {
             active += 1;
         }
 
-        let name = d.path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| d.path.display().to_string());
+        let name = d
+            .path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| d.path.display().to_string());
         out.push_str(&format!("**{name}**\n<small>\n\n"));
         match &d.kind {
             DigestKind::FirstSeen => out.push_str("tracking started\n"),
             DigestKind::NoChange => out.push_str("no new commits\n"),
-            DigestKind::Diverged => out.push_str("history rewritten since last check (rebase/amend/force-push)\n"),
+            DigestKind::Diverged => {
+                out.push_str("history rewritten since last check (rebase/amend/force-push)\n")
+            }
             DigestKind::NewCommits(commits) => {
                 for c in commits {
-                    out.push_str(&format!("- {} {}\n", commit_link(c, d.github_base.as_deref()), c.subject));
+                    out.push_str(&format!(
+                        "- {} {}\n",
+                        commit_link(c, d.github_base.as_deref()),
+                        c.subject
+                    ));
                 }
             }
         }

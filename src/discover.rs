@@ -20,7 +20,9 @@ fn walk(dir: &Path, max_depth: usize, depth: usize, out: &mut Vec<PathBuf>) {
         out.push(dir.to_path_buf());
         return; // a repo's own subdirectories are never searched for more repos
     }
-    let Ok(entries) = std::fs::read_dir(dir) else { return };
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return;
+    };
     for entry in entries.flatten() {
         if entry.file_type().map(|t| t.is_dir()).unwrap_or(false) {
             walk(&entry.path(), max_depth, depth + 1, out);
@@ -33,7 +35,8 @@ mod tests {
     use super::*;
 
     fn scratch(name: &str) -> PathBuf {
-        let dir = std::env::temp_dir().join(format!("chronicle-test-{name}-{}", std::process::id()));
+        let dir =
+            std::env::temp_dir().join(format!("chronicle-test-{name}-{}", std::process::id()));
         std::fs::remove_dir_all(&dir).ok();
         std::fs::create_dir_all(&dir).unwrap();
         dir
@@ -79,7 +82,10 @@ mod tests {
         let root = scratch("depth");
         std::fs::create_dir_all(root.join("a/b/c/deeprepo/.git")).unwrap();
 
-        assert!(find_repos(&root, 1).is_empty(), "repo is deeper than max_depth=1, should not be found");
+        assert!(
+            find_repos(&root, 1).is_empty(),
+            "repo is deeper than max_depth=1, should not be found"
+        );
         assert_eq!(find_repos(&root, 10), vec![root.join("a/b/c/deeprepo")]);
         std::fs::remove_dir_all(&root).ok();
     }

@@ -9,7 +9,11 @@ use report::{DigestKind, RepoDigest};
 use std::process::{Command, ExitCode};
 
 #[derive(Parser, Debug)]
-#[command(name = "chronicle", version = "0.1.0", about = "Periodic activity digest for a tree of git repos")]
+#[command(
+    name = "chronicle",
+    version = "0.1.0",
+    about = "Periodic activity digest for a tree of git repos"
+)]
 struct Args {
     /// Path to config.toml. Defaults to $XDG_CONFIG_HOME/chronicle/config.toml,
     /// then ~/.config/chronicle/config.toml, then ./config.toml.
@@ -29,12 +33,22 @@ struct Args {
 /// "reuse the system tool" pattern as everywhere else this session.
 fn today_and_now() -> (String, String) {
     let out = Command::new("date").arg("+%Y-%m-%d %H:%M:%S").output();
-    let text = out.ok().map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).unwrap_or_default();
+    let text = out
+        .ok()
+        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+        .unwrap_or_default();
     let mut parts = text.splitn(2, ' ');
-    (parts.next().unwrap_or("unknown-date").to_string(), parts.next().unwrap_or("unknown-time").to_string())
+    (
+        parts.next().unwrap_or("unknown-date").to_string(),
+        parts.next().unwrap_or("unknown-time").to_string(),
+    )
 }
 
-fn append_markdown(dir: &std::path::Path, digests: &[RepoDigest], show_unchanged: bool) -> std::io::Result<()> {
+fn append_markdown(
+    dir: &std::path::Path,
+    digests: &[RepoDigest],
+    show_unchanged: bool,
+) -> std::io::Result<()> {
     std::fs::create_dir_all(dir)?;
     let (date, time) = today_and_now();
     let file_path = dir.join(format!("{date}.md"));
@@ -102,7 +116,12 @@ fn main() -> ExitCode {
 
             let dirty = git::dirty_status(&repo);
             let github_base = git::github_base_url(&repo);
-            RepoDigest { path: repo, kind, dirty, github_base }
+            RepoDigest {
+                path: repo,
+                kind,
+                dirty,
+                github_base,
+            }
         })
         .collect();
 
@@ -119,6 +138,9 @@ fn main() -> ExitCode {
         }
     }
 
-    print!("{}", report::render(&digests, !args.no_color, args.show_unchanged));
+    print!(
+        "{}",
+        report::render(&digests, !args.no_color, args.show_unchanged)
+    );
     ExitCode::SUCCESS
 }
